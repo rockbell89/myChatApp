@@ -4,17 +4,82 @@
 <head>
   <meta charset="utf-8">
   <title>Chat App</title>
+  <style>
+    .chat-wrapper {
+      width: 400px;
+      margin: 0 auto;
+
+    }
+
+    #messages {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      height: 300px;
+      overflow-y: auto;
+      padding: 40px;
+    }
+
+    #messages li {
+      margin: 10px 0;
+    }
+
+    #message {
+      margin-top: 10px;
+      width: 100%;
+      height: 50px;
+      border: 1px solid #b2b2b2;
+      padding: 5px 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    .btn-box {
+      float: right;
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    .title {
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    .title h1 {
+      float: left;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
-  <ul id="messages"></ul>
-  <form autocomplete="off">
-    <input type="text" id="message" placeholder="your message...">
-  </form>
+  <div class="chat-wrapper">
+    <div class="title">
+      <h1>myChatApp</h1>
+      <div class="btn-box">
+        <button id="login">로그인</button>
+        <button id="logout" class="hidden">로그아웃</button>
+      </div>
+    </div>
+    <ul id="messages" class="hidden"></ul>
+    <form autocomplete="off" class="hidden">
+      <input type="text" id="message" placeholder="메세지를 입력하세요.">
+    </form>
+  </div>
+
 
   <!-- <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script> -->
   <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>
   <script src="js/main.js"></script>
 </body>
 

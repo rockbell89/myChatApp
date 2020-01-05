@@ -10,28 +10,74 @@ var firebaseConfig = {
   appId: "1:698181633029:web:156268cb812c397abfc86c",
   measurementId: "G-V7KHLLVCFN"
 };
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 const settings = {
-  /* your settings... */
   timestampsInSnapshots: true
 };
 db.settings(settings);
 
+
+// 컬렉션 추가
 const collection = db.collection('messages');
 
-const message = document.getElementById('message');
+
+
 const form = document.querySelector('form');
 const messages = document.getElementById('messages');
+const message = document.getElementById('message');
+const login = document.getElementById('login');
+const logout = document.getElementById('logout');
 
-collection.orderBy('created').get().then(snapshot => {
-  snapshot.forEach(doc => {
-    const li = document.createElement('li');
-    li.textContent = doc.data().message;
-    messages.appendChild(li);
-  })
+const auth = firebase.auth();
+let me = null;
+
+login.addEventListener('click', () => {
+  auth.signInAnonymously();
+});
+
+logout.addEventListener('click', () => {
+  auth.signOut();
+});
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    me = user;
+
+    while (messages.firstChild) {
+      messages.removeChild(messages.firstChild);
+    }
+    collection.orderBy('created').onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+
+        if (change.type === 'added') {
+          const li = document.createElement('li');
+          const d = change.doc.data();
+          li.textContent = d.uid + ':' + d.message;
+          messages.appendChild(li);
+
+        }
+      })
+    }, error => {
+
+    });
+    console.log(user.uid);
+    login.classList.add('hidden');
+    [logout, form, messages].forEach(el => {
+      el.classList.remove('hidden');
+    });
+    message.focus();
+    return;
+  }
+  console.log('로그아웃 상태입니다.');
+  login.classList.remove('hidden');
+  [logout, form, messages].forEach(el => {
+    el.classList.add('hidden');
+  });
+
+
+
 })
 
 form.addEventListener('submit', e => {
@@ -41,19 +87,24 @@ form.addEventListener('submit', e => {
     return;
   }
 
-  const li = document.createElement('li');
-  li.textContent = val;
-  messages.appendChild(li);
-
   message.value = '';
   message.focus();
 
+
+
+  // const li = document.createElement('li');
+  // li.textContent = val;
+  // messages.appendChild(li);
+
+
+
   collection.add({
-      message: message.value,
-      created: firebase.firestore.FieldValue.serverTimestamp()
+      message: val,
+      created: firebase.firestore.FieldValue.serverTimestamp(),
+      uid: me ? me.uid : 'Nobody',
     })
     .then(doc => {
-      console.log(`${doc.id} added!`);
+      console.log(`${doc.id} : ${val} added!`);
 
     }).catch(error => {
       console.log(error);
